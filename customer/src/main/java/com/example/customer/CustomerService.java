@@ -1,5 +1,7 @@
 package com.example.customer;
 
+import com.example.clients.fraud.FraudCheckResponse;
+import com.example.clients.fraud.FraudClient;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Service;
 public class CustomerService {
 
   private final CustomerRepository customerRepository;
+  private final FraudClient fraudClient;
 
   public void registerCustomer(CustomerRegistrationRequest request) {
     Customer customer =
@@ -16,6 +19,10 @@ public class CustomerService {
             .lastName(request.lastName())
             .email(request.email())
             .build();
-    customerRepository.save(customer);
+    customerRepository.saveAndFlush(customer);
+    FraudCheckResponse fraudCheckResponse = fraudClient.isFraudster(customer.getId());
+    if (fraudCheckResponse.isFraudster()) {
+      throw new IllegalStateException("is fraudster");
+    }
   }
 }
