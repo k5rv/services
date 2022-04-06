@@ -8,6 +8,8 @@ spring:
     username: example
     url: jdbc:postgresql://localhost:5432/customer
     password: password
+  zipkin:
+    base-url: http://127.0.0.1:9411
   jpa:
     properties:
       hibernate:
